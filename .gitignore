@@ -1,0 +1,4 @@
+/packages/opendnp3*
+/*.suo
+/**/bin
+/**/obj

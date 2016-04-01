@@ -171,27 +171,27 @@ namespace Automatak.Simulator.DNP3.RelayOutstationPlugin
             return CommandStatus.NOT_SUPPORTED;
         }
 
-        CommandStatus ICommandHandler.Operate(ControlRelayOutputBlock command, ushort index)
+        CommandStatus ICommandHandler.Operate(ControlRelayOutputBlock command, ushort index, OperateType opType)
         {
             return OnControl(command, index, true);
         }
 
-        CommandStatus ICommandHandler.Operate(AnalogOutputInt32 command, ushort index)
+        CommandStatus ICommandHandler.Operate(AnalogOutputInt32 command, ushort index, OperateType opType)
         {
             return CommandStatus.NOT_SUPPORTED;
         }
 
-        CommandStatus ICommandHandler.Operate(AnalogOutputInt16 command, ushort index)
+        CommandStatus ICommandHandler.Operate(AnalogOutputInt16 command, ushort index, OperateType opType)
         {
             return CommandStatus.NOT_SUPPORTED;
         }
 
-        CommandStatus ICommandHandler.Operate(AnalogOutputFloat32 command, ushort index)
+        CommandStatus ICommandHandler.Operate(AnalogOutputFloat32 command, ushort index, OperateType opType)
         {
             return CommandStatus.NOT_SUPPORTED;
         }
 
-        CommandStatus ICommandHandler.Operate(AnalogOutputDouble64 command, ushort index)
+        CommandStatus ICommandHandler.Operate(AnalogOutputDouble64 command, ushort index, OperateType opType)
         {
             return CommandStatus.NOT_SUPPORTED;
         }

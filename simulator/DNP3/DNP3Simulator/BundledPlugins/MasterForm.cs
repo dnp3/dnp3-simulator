@@ -87,7 +87,7 @@ namespace Automatak.Simulator.DNP3
             DoCommandAction(this.analogOutputControl.SelectAndOperateAction);
         }
 
-        private void DoCommandAction(Func<ICommandProcessor, Task<CommandResponse>> func)
+        private void DoCommandAction(Func<ICommandProcessor, Task<CommandTaskResult>> func)
         {
             this.toolStripStatusLabel.Text = "Result: ... ";
             var task = func(this.master);

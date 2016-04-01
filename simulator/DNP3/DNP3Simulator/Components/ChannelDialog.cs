@@ -70,20 +70,23 @@ namespace Automatak.Simulator.DNP3.Components
             var stopBits = (StopBits) comboBoxStopBits.SelectedValue;
 
             var flags = logLevelControl1.Filters.Flags;
+            var retry = new ChannelRetry(min, max);
             var ss = new SerialSettings(name, baud, dataBits, stopBits, parity, flow);
-            return (IDNP3Manager manager) => manager.AddSerial(this.textBoxID.Text, flags, min, max, ss);
+            return (IDNP3Manager manager) => manager.AddSerial(this.textBoxID.Text, flags, retry, ss);
         }
 
         private Func<IDNP3Manager, IChannel> GetTCPClientFunctor(TimeSpan min, TimeSpan max)
         {
             var flags = logLevelControl1.Filters.Flags;
-            return (IDNP3Manager manager) => manager.AddTCPClient(this.textBoxID.Text, flags, min, max, textBoxHost.Text, Decimal.ToUInt16(numericUpDownPort.Value));
+            var retry = new ChannelRetry(min, max);
+            return (IDNP3Manager manager) => manager.AddTCPClient(this.textBoxID.Text, flags, retry, textBoxHost.Text, Decimal.ToUInt16(numericUpDownPort.Value));
         }
 
         private Func<IDNP3Manager, IChannel> GetTCPServerFunctor(TimeSpan min, TimeSpan max)
         {
             var flags = logLevelControl1.Filters.Flags;
-            return (IDNP3Manager manager) => manager.AddTCPServer(this.textBoxID.Text, flags, min, max, textBoxServerHost.Text, Decimal.ToUInt16(numericUpDownServerPort.Value));
+            var retry = new ChannelRetry(min, max);
+            return (IDNP3Manager manager) => manager.AddTCPServer(this.textBoxID.Text, flags, retry, textBoxServerHost.Text, Decimal.ToUInt16(numericUpDownServerPort.Value));
         } 
 
         public Func<IDNP3Manager, IChannel> ChannelAction

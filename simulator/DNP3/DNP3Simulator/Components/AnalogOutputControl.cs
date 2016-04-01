@@ -30,7 +30,7 @@ namespace Automatak.Simulator.DNP3.Components
             comboBoxType.DataSource = Enum.GetValues(typeof(AOType));
         }
 
-        public Func<ICommandProcessor, Task<CommandResponse>> DirectOperateAction
+        public Func<ICommandProcessor, Task<CommandTaskResult>> DirectOperateAction
         {
             get
             {
@@ -52,7 +52,7 @@ namespace Automatak.Simulator.DNP3.Components
             }
         }
 
-        public Func<ICommandProcessor, Task<CommandResponse>> SelectAndOperateAction
+        public Func<ICommandProcessor, Task<CommandTaskResult>> SelectAndOperateAction
         {
             get
             {

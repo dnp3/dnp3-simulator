@@ -35,7 +35,7 @@ namespace Automatak.Simulator.DNP3
             }
         }
 
-        public Func<ICommandProcessor, Task<CommandResponse>> DirectOperateAction
+        public Func<ICommandProcessor, Task<CommandTaskResult>> DirectOperateAction
         { 
             get {
                 var crob = ControlValue;
@@ -43,7 +43,7 @@ namespace Automatak.Simulator.DNP3
             }
         }
 
-        public Func<ICommandProcessor, Task<CommandResponse>>  SelectAndOperateAction
+        public Func<ICommandProcessor, Task<CommandTaskResult>>  SelectAndOperateAction
         {
             get
             {

@@ -38,11 +38,16 @@
             this.label1 = new System.Windows.Forms.Label();
             this.numericUpDownDest = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownSource = new System.Windows.Forms.NumericUpDown();
+            this.groupBoxKeepAlive = new System.Windows.Forms.GroupBox();
+            this.numericUpDownKeepAliveTimeout = new System.Windows.Forms.NumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
             this.groupBoxConfirmed.SuspendLayout();
+            this.groupBoxKeepAlive.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeout)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRetries)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDest)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSource)).BeginInit();            
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownKeepAliveTimeout)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBoxConfirmed
@@ -178,10 +183,53 @@
             0,
             0});
             // 
+            // groupBoxKeepAlive
+            // 
+            this.groupBoxKeepAlive.Controls.Add(this.numericUpDownKeepAliveTimeout);
+            this.groupBoxKeepAlive.Controls.Add(this.label6);
+            this.groupBoxKeepAlive.Location = new System.Drawing.Point(229, 105);
+            this.groupBoxKeepAlive.Name = "groupBoxKeepAlive";
+            this.groupBoxKeepAlive.Size = new System.Drawing.Size(198, 100);
+            this.groupBoxKeepAlive.TabIndex = 24;
+            this.groupBoxKeepAlive.TabStop = false;
+            this.groupBoxKeepAlive.Text = "keep alive options";
+            // 
+            // numericUpDownKeepAliveTimeout
+            // 
+            this.numericUpDownKeepAliveTimeout.Location = new System.Drawing.Point(17, 29);
+            this.numericUpDownKeepAliveTimeout.Maximum = new decimal(new int[] {
+            -1,
+            0,
+            0,
+            0});
+            this.numericUpDownKeepAliveTimeout.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDownKeepAliveTimeout.Name = "numericUpDownKeepAliveTimeout";
+            this.numericUpDownKeepAliveTimeout.Size = new System.Drawing.Size(88, 20);
+            this.numericUpDownKeepAliveTimeout.TabIndex = 13;
+            this.numericUpDownKeepAliveTimeout.Value = new decimal(new int[] {
+            120,
+            0,
+            0,
+            0});
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(111, 31);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(55, 13);
+            this.label6.TabIndex = 14;
+            this.label6.Text = "timeout (s)";
+            // 
             // LinkConfigControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.groupBoxKeepAlive);
             this.Controls.Add(this.groupBoxConfirmed);
             this.Controls.Add(this.checkBoxConfirmed);
             this.Controls.Add(this.label2);
@@ -189,13 +237,16 @@
             this.Controls.Add(this.numericUpDownDest);
             this.Controls.Add(this.numericUpDownSource);
             this.Name = "LinkConfigControl";
-            this.Size = new System.Drawing.Size(232, 236);
+            this.Size = new System.Drawing.Size(449, 236);
             this.groupBoxConfirmed.ResumeLayout(false);
             this.groupBoxConfirmed.PerformLayout();
+            this.groupBoxKeepAlive.ResumeLayout(false);
+            this.groupBoxKeepAlive.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeout)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownRetries)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDest)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSource)).EndInit();            
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownKeepAliveTimeout)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -213,7 +264,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.NumericUpDown numericUpDownDest;
         private System.Windows.Forms.NumericUpDown numericUpDownSource;
-
-
+        private System.Windows.Forms.GroupBox groupBoxKeepAlive;
+        private System.Windows.Forms.NumericUpDown numericUpDownKeepAliveTimeout;
+        private System.Windows.Forms.Label label6;
     }
 }

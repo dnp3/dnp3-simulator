@@ -27,6 +27,7 @@ namespace Automatak.Simulator.DNP3.Components
                 config.remoteAddr = Decimal.ToUInt16(this.numericUpDownDest.Value);
                 config.numRetry = Decimal.ToUInt32(this.numericUpDownRetries.Value);
                 config.timeoutMs = Decimal.ToUInt32(this.numericUpDownTimeout.Value);
+                config.keepAliveTimeoutMs = Decimal.ToUInt32(this.numericUpDownKeepAliveTimeout.Value * 1000);
                 return config;
             }
             set
@@ -49,6 +50,7 @@ namespace Automatak.Simulator.DNP3.Components
             this.numericUpDownTimeout.Value = config.timeoutMs;
             this.numericUpDownRetries.Value = config.numRetry;
             this.checkBoxConfirmed.Checked = config.useConfirms;
+            this.numericUpDownKeepAliveTimeout.Value = config.keepAliveTimeoutMs / 1000;
 
             this.SetState();
         }

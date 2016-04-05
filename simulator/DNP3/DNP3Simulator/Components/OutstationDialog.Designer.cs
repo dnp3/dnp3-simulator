@@ -163,7 +163,7 @@ namespace Automatak.Simulator.DNP3.Components
             this.linkConfigControl.Configuration = linkConfig1;
             this.linkConfigControl.Location = new System.Drawing.Point(6, 6);
             this.linkConfigControl.Name = "linkConfigControl";
-            this.linkConfigControl.Size = new System.Drawing.Size(226, 222);
+            this.linkConfigControl.Size = new System.Drawing.Size(462, 222);
             this.linkConfigControl.TabIndex = 6;
             // 
             // tabPage2

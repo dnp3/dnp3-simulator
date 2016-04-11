@@ -29,13 +29,31 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DNP3CLRAdapter, Version=1.0.5923.29614, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\..\..\packages\opendnp3.2.1.0-RC5\lib\net45\DNP3CLRAdapter.dll</HintPath>
+    <Reference Include="DNP3CLRAdapter, Version=1.0.5942.30511, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\..\..\packages\opendnp3.2.1.0-RC6\lib\net45\DNP3CLRAdapter.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="DNP3CLRInterface, Version=2.0.1.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\opendnp3.2.1.0-RC5\lib\net45\DNP3CLRInterface.dll</HintPath>
+      <HintPath>..\..\..\packages\opendnp3.2.1.0-RC6\lib\net45\DNP3CLRInterface.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

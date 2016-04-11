@@ -25,8 +25,9 @@ namespace Automatak.Simulator.DNP3
     class DNP3SimulatorPlugin : ISimulatorPlugin
     {
         readonly ImageList imgList = new ImageList();
-        readonly IDNP3Manager manager = DNP3ManagerFactory.CreateManager();
         readonly ILogHandler logHandler;
+        readonly IDNP3Manager manager;
+        
         readonly DNP3Config config = new DNP3Config(
            new IOutstationModule[]{ 
                Automatak.Simulator.DNP3.DefaultOutstationPlugin.OutstationModule.Instance,
@@ -38,7 +39,7 @@ namespace Automatak.Simulator.DNP3
         {
             this.logHandler = new ForwardingLogHandler(log);
 
-            this.manager.AddLogHandler(logHandler);
+            this.manager = DNP3ManagerFactory.CreateManager(this.logHandler);
 
             imgList.Images.Add(Properties.Resources.satellite_dish);            
             imgList.Images.Add(Properties.Resources.network_monitor);

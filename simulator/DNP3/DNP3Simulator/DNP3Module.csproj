@@ -175,6 +175,12 @@
     <Compile Include="Components\StaticResponseTypeControl.Designer.cs">
       <DependentUpon>StaticResponseTypeControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\TLSOptionsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\TLSOptionsControl.Designer.cs">
+      <DependentUpon>TLSOptionsControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="DNP3Config.cs" />
     <Compile Include="IDNP3Config.cs" />
     <Compile Include="OutstationNode.cs" />
@@ -284,6 +290,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Components\CROBControl.resx">
       <DependentUpon>CROBControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Components\TLSOptionsControl.resx">
+      <DependentUpon>TLSOptionsControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

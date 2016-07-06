@@ -25,27 +25,28 @@ namespace Automatak.Simulator.DNP3.Components
 
             this.comboBoxParity.SelectedItem = Parity.NONE;
             this.comboBoxStopBits.SelectedItem = StopBits.ONE;
-            this.comboBoxFlowControl.SelectedItem = FlowControl.NONE;
-
-            for (int i = 0; i < 3; i++)
-            {
-                this.clientTlsVersion.SetItemChecked(i, true);
-                this.serverTlsVersion.SetItemChecked(i, true);
-            }
+            this.comboBoxFlowControl.SelectedItem = FlowControl.NONE;           
         }
 
         private void buttonADD_Click(object sender, EventArgs e)
-        {            
-            create = GetCreateFunctorMaybeNull();
-            if (create == null)
+        {
+            try
             {
-                toolStripStatusLabel1.Text = "Unable to create channel";
+                create = GetCreateFunctorMaybeNull();
+                if (create == null)
+                {
+                    toolStripStatusLabel1.Text = "Unable to create channel";
+                }
+                else
+                {
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
             }
-            else
-            { 
-                this.DialogResult = DialogResult.OK;
-                this.Close();
-            }            
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error creating channel");
+            }
         }
 
         private Func<IDNP3Manager, IChannel> GetCreateFunctorMaybeNull()
@@ -55,86 +56,16 @@ namespace Automatak.Simulator.DNP3.Components
 
             switch (tabControlChannelType.SelectedIndex)
             { 
-                case(0):
-                    if (clientEnableTls.Checked &&
-                        !TlsSettingsValid(clientTlsTrustedCert.Text, clientTlsCert.Text, clientTlsCert.Text,
-                                          clientTlsVersion.GetItemChecked(0), clientTlsVersion.GetItemChecked(1), clientTlsVersion.GetItemChecked(2)))
-                    {
-                        return null;
-                    }
+                case(0):                                        
                     return GetTCPClientFunctor(min, max, clientEnableTls.Checked);
-                case(1):
-                    if (serverEnableTls.Checked &&
-                        !TlsSettingsValid(serverTlsTrustedCert.Text, serverTlsCert.Text, serverTlsCert.Text,
-                                          serverTlsVersion.GetItemChecked(0), serverTlsVersion.GetItemChecked(1), serverTlsVersion.GetItemChecked(2)))
-                    {
-                        return null;
-                    }
+                case(1):                    
                     return GetTCPServerFunctor(min, max, serverEnableTls.Checked);
                 case(2):
                     return GetSerialFunctor(min, max);
                 default:
                     return null;
             }
-        }
-
-        private bool TlsSettingsValid(string trustedCertPath, string certificatePath, string privateKeyPath,
-            bool tlsVersion1_0, bool tlsVersion1_1, bool tlsVersion1_2)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(trustedCertPath) ||
-                    string.IsNullOrWhiteSpace(Path.GetFullPath(trustedCertPath)))
-                {
-                    MessageBox.Show("Invalid Trusted Certificate File Path", "Invalid TLS Options");
-                    return false;
-                }
-            }
-            catch 
-            {
-                MessageBox.Show("Invalid Trusted Certificate File Path", "Invalid TLS Options");
-                return false;
-            }
-
-            try
-            {
-                if (string.IsNullOrWhiteSpace(certificatePath) ||
-                    string.IsNullOrWhiteSpace(Path.GetFullPath(certificatePath)))
-                {
-                    MessageBox.Show("Invalid Certificate File Path", "Invalid TLS Options");
-                    return false;
-                }
-            }
-            catch
-            {
-                MessageBox.Show("Invalid Certificate File Path", "Invalid TLS Options");
-                return false;
-            }
-
-            try
-            {
-                if (string.IsNullOrWhiteSpace(privateKeyPath) ||
-                    string.IsNullOrWhiteSpace(Path.GetFullPath(privateKeyPath)))
-                {
-                    MessageBox.Show("Invalid Private Key File Path", "Invalid TLS Options");
-                    return false;
-                }
-            }
-            catch
-            {
-                MessageBox.Show("Invalid Private Key File Path", "Invalid TLS Options");
-                return false;
-            }
-
-            if (!tlsVersion1_0 &&
-                !tlsVersion1_1 &&
-                !tlsVersion1_2)
-            {
-                MessageBox.Show("At least one version must be selected.", "Invalid TLS Options");
-                return false;
-            }
-            return true;
-        }
+        }        
 
         private Func<IDNP3Manager, IChannel> GetSerialFunctor(TimeSpan min, TimeSpan max)
         {
@@ -152,46 +83,37 @@ namespace Automatak.Simulator.DNP3.Components
             return (IDNP3Manager manager) => manager.AddSerial(this.textBoxID.Text, flags, retry, ss);
         }
 
-        private Func<IDNP3Manager, IChannel> GetTCPClientFunctor(TimeSpan min, TimeSpan max, bool tlsRequired)
+        private Func<IDNP3Manager, IChannel> GetTCPClientFunctor(TimeSpan min, TimeSpan max, bool useTLS)
         {
             var flags = logLevelControl1.Filters.Flags;
             var retry = new ChannelRetry(min, max);
-            if (tlsRequired)
-                return (IDNP3Manager manager) => 
-                    manager.AddTLSClient(this.textBoxID.Text, flags, retry, textBoxHost.Text, Decimal.ToUInt16(numericUpDownPort.Value),
-                        new TLSConfig(
-                            clientTlsTrustedCert.Text,
-                            clientTlsCert.Text,
-                            clientTlsPrivateKey.Text,
-                            Convert.ToInt32(clientTlsMaxDepth.Value),
-                            clientTlsVersion.GetItemChecked(0),
-                            clientTlsVersion.GetItemChecked(1),
-                            clientTlsVersion.GetItemChecked(2),
-                            clientTlsCipherList.Text));
-            else
+            if (useTLS)
+            {
+                var config = this.clientTLSOptionsControl.Configuration;
                 return (IDNP3Manager manager) =>
-                    manager.AddTCPClient(this.textBoxID.Text, flags, retry, textBoxHost.Text, Decimal.ToUInt16(numericUpDownPort.Value));
+                    manager.AddTLSClient(this.textBoxID.Text, flags, retry, textBoxHost.Text, Decimal.ToUInt16(numericUpDownPort.Value), config);
+            }
+            else
+            {
+                return (IDNP3Manager manager) => manager.AddTCPClient(this.textBoxID.Text, flags, retry, textBoxHost.Text, Decimal.ToUInt16(numericUpDownPort.Value));
+            }
         }
 
-        private Func<IDNP3Manager, IChannel> GetTCPServerFunctor(TimeSpan min, TimeSpan max, bool tlsRequired)
+        private Func<IDNP3Manager, IChannel> GetTCPServerFunctor(TimeSpan min, TimeSpan max, bool useTLS)
         {
             var flags = logLevelControl1.Filters.Flags;
             var retry = new ChannelRetry(min, max);
-            if (tlsRequired)
-                return (IDNP3Manager manager) => 
-                    manager.AddTLSServer(this.textBoxID.Text, flags, retry, textBoxServerHost.Text, Decimal.ToUInt16(numericUpDownServerPort.Value),
-                        new TLSConfig(
-                            serverTlsTrustedCert.Text,
-                            serverTlsCert.Text,
-                            serverTlsPrivateKey.Text,
-                            Convert.ToInt32(serverTlsMaxDepth.Value),
-                            serverTlsVersion.GetItemChecked(0),
-                            serverTlsVersion.GetItemChecked(1),
-                            serverTlsVersion.GetItemChecked(2),
-                            serverTlsCipherList.Text));
+            if (useTLS)
+            {
+                var config = this.serverTLSOptionsControl.Configuration;
+                return (IDNP3Manager manager) =>
+                    manager.AddTLSServer(this.textBoxID.Text, flags, retry, textBoxServerHost.Text, Decimal.ToUInt16(numericUpDownServerPort.Value), config);
+            }
             else
-                return (IDNP3Manager manager) => 
+            {
+                return (IDNP3Manager manager) =>
                     manager.AddTCPServer(this.textBoxID.Text, flags, retry, textBoxServerHost.Text, Decimal.ToUInt16(numericUpDownServerPort.Value));
+            }
         } 
 
         public Func<IDNP3Manager, IChannel> ChannelAction
@@ -212,6 +134,7 @@ namespace Automatak.Simulator.DNP3.Components
 
         private Func<IDNP3Manager, IChannel> create = null;
 
+        /*
         private void clientTlsBrowseCert_Click(object sender, EventArgs e)
         {
             DialogResult result = openFileDialog.ShowDialog();
@@ -265,5 +188,6 @@ namespace Automatak.Simulator.DNP3.Components
                 serverTlsTrustedCert.Text = openFileDialog.FileName;
             }
         }
+        */
     }
 }

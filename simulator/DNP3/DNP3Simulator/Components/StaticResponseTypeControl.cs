@@ -27,16 +27,33 @@ namespace Automatak.Simulator.DNP3.Components
             this.ComboBoxAnalogOutputStatus.DataSource = Enum.GetValues(typeof(StaticAnalogOutputStatusVariation));
         }
 
-        // TODO remove this
+        public void LoadTemplate(DatabaseTemplate template)
+        {
+            SelectVariation(ComboBoxBinary, template.binary.Values.Select(r => r.staticVariation));
+            SelectVariation(ComboBoxDoubleBinary, template.doubleBinary.Values.Select(r => r.staticVariation));
+            SelectVariation(ComboBoxCounter, template.counter.Values.Select(r => r.staticVariation));
+            SelectVariation(ComboBoxFrozenCounter, template.frozenCounter.Values.Select(r => r.staticVariation));
+            SelectVariation(ComboBoxAnalog, template.analog.Values.Select(r => r.staticVariation));
+            SelectVariation(ComboBoxBinaryOutputStatus, template.binaryOutputStatus.Values.Select(r => r.staticVariation));
+            SelectVariation(ComboBoxAnalogOutputStatus, template.analogOutputStatus.Values.Select(r => r.staticVariation));
+        }
+
         public void Configure(DatabaseTemplate template)
         {
-            foreach (var record in template.binaries) record.staticVariation = (StaticBinaryVariation)this.ComboBoxBinary.SelectedItem;
-            foreach (var record in template.binaryOutputStatii) record.staticVariation = (StaticBinaryOutputStatusVariation)this.ComboBoxBinaryOutputStatus.SelectedItem;
-            foreach (var record in template.doubleBinaries) record.staticVariation = (StaticDoubleBinaryVariation)this.ComboBoxDoubleBinary.SelectedItem;
-            foreach (var record in template.counters) record.staticVariation = (StaticCounterVariation)ComboBoxCounter.SelectedItem;
-            foreach (var record in template.frozenCounters) record.staticVariation = (StaticFrozenCounterVariation)ComboBoxCounter.SelectedItem;
-            foreach (var record in template.analogs) record.staticVariation = (StaticAnalogVariation)ComboBoxAnalog.SelectedItem;
-            foreach (var record in template.analogOutputStatii) record.staticVariation = (StaticAnalogOutputStatusVariation)ComboBoxAnalogOutputStatus.SelectedItem;            
+            if (ComboBoxBinary.SelectedItem != null)
+                foreach (var record in template.binary.Values) record.staticVariation = (StaticBinaryVariation)ComboBoxBinary.SelectedItem;
+            if (ComboBoxBinaryOutputStatus.SelectedItem != null)
+                foreach (var record in template.binaryOutputStatus.Values) record.staticVariation = (StaticBinaryOutputStatusVariation)ComboBoxBinaryOutputStatus.SelectedItem;
+            if (ComboBoxDoubleBinary.SelectedItem != null)
+                foreach (var record in template.doubleBinary.Values) record.staticVariation = (StaticDoubleBinaryVariation)ComboBoxDoubleBinary.SelectedItem;
+            if (ComboBoxCounter.SelectedItem != null)
+                foreach (var record in template.counter.Values) record.staticVariation = (StaticCounterVariation)ComboBoxCounter.SelectedItem;
+            if (ComboBoxFrozenCounter.SelectedItem != null)
+                foreach (var record in template.frozenCounter.Values) record.staticVariation = (StaticFrozenCounterVariation)ComboBoxFrozenCounter.SelectedItem;
+            if (ComboBoxAnalog.SelectedItem != null)
+                foreach (var record in template.analog.Values) record.staticVariation = (StaticAnalogVariation)ComboBoxAnalog.SelectedItem;
+            if (ComboBoxAnalogOutputStatus.SelectedItem != null)
+                foreach (var record in template.analogOutputStatus.Values) record.staticVariation = (StaticAnalogOutputStatusVariation)ComboBoxAnalogOutputStatus.SelectedItem;
         }
     }
 }

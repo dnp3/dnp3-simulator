@@ -17,6 +17,13 @@ namespace Automatak.Simulator.DNP3.Components
             InitializeComponent();            
         }
 
+        protected static void SelectVariation<T>(ComboBox control, IEnumerable<T> variations)
+        {
+            var values = variations.Distinct().ToList();
+            // A blank selection represents mixed per-point variations; preserve them on Apply.
+            control.SelectedItem = values.Count == 1 ? (object)values[0] : null;
+        }
+
         protected ComboBox ComboBoxBinary
         {
             get

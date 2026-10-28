@@ -26,6 +26,7 @@ namespace Automatak.Simulator
 
         void ISimulatorNodeCallbacks.ChangeState(NodeState state)
         {
+            if (control.IsDisposed || control.Disposing) return;
             if (control.InvokeRequired)
             {
                 ISimulatorNodeCallbacks temp = this;
@@ -40,6 +41,7 @@ namespace Automatak.Simulator
        
         void ISimulatorNodeCallbacks.ChangeImage(int index)
         {
+            if (control.IsDisposed || control.Disposing) return;
             if (control.InvokeRequired)
             {
                 ISimulatorNodeCallbacks temp = this;

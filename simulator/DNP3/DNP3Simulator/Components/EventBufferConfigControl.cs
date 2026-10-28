@@ -16,6 +16,7 @@ namespace Automatak.Simulator.DNP3.Components
 {
     public partial class EventBufferConfigControl : UserControl
     {       
+        EventBufferConfig initialConfig = new EventBufferConfig();
         const UInt16 defaultValue = 100;
        
         static IEnumerable<MeasType> types = new MeasType[] { 
@@ -44,20 +45,29 @@ namespace Automatak.Simulator.DNP3.Components
         {
             get
             {
-                var config = new EventBufferConfig();
+                var config = ConfigurationXml.Clone(initialConfig);
                 int i = 0;
                 foreach (ListViewItem item in listView1.Items)
                 {
-                    var value = UInt32.Parse(item.SubItems[1].Text);
+                    var value = UInt16.Parse(item.SubItems[1].Text);
                     SetValue(config, i, value);
                     ++i;            
                 }
 
                 return config;
             }
+            set
+            {
+                initialConfig = ConfigurationXml.Clone(value);
+                var values = new ushort[] { value.maxBinaryEvents, value.maxDoubleBinaryEvents,
+                    value.maxCounterEvents, value.maxFrozenCounterEvents, value.maxAnalogEvents,
+                    value.maxBinaryOutputStatusEvents, value.maxAnalogOutputStatusEvents };
+                for (int i = 0; i < values.Length; ++i)
+                    listView1.Items[i].SubItems[1].Text = values[i].ToString();
+            }
         }
 
-        void SetValue(EventBufferConfig config, int index, UInt32 value)
+        void SetValue(EventBufferConfig config, int index, UInt16 value)
         { 
             switch(index)
             {

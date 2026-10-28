@@ -42,13 +42,13 @@ namespace Automatak.Simulator.DNP3.Components
             {
                 var template = new DatabaseTemplate(0);
                                 
-                template.binaries = templateControlBinary.GetRecords().Select(rec => new BinaryRecord(rec.index)).ToList();
-                template.doubleBinaries = templateControlDoubleBinary.GetRecords().Select(rec => new DoubleBinaryRecord(rec.index)).ToList();
-                template.counters = templateControlCounter.GetRecords().Select(rec => new CounterRecord(rec.index)).ToList();
-                template.frozenCounters = templateControlFrozenCounter.GetRecords().Select(rec => new FrozenCounterRecord(rec.index)).ToList();
-                template.analogs = templateControlAnalog.GetRecords().Select(rec => new AnalogRecord(rec.index)).ToList();
-                template.binaryOutputStatii = templateControlBOStatus.GetRecords().Select(rec => new BinaryOutputStatusRecord(rec.index)).ToList();
-                template.analogOutputStatii = templateControlAOStatus.GetRecords().Select(rec => new AnalogOutputStatusRecord(rec.index)).ToList();                                           
+                template.binary = templateControlBinary.GetRecords().ToDictionary(rec => rec.index, rec => new BinaryConfig() { clazz = rec.clazz });
+                template.doubleBinary = templateControlDoubleBinary.GetRecords().ToDictionary(rec => rec.index, rec => new DoubleBinaryConfig() { clazz = rec.clazz });
+                template.counter = templateControlCounter.GetRecords().ToDictionary(rec => rec.index, rec => new CounterConfig() { clazz = rec.clazz });
+                template.frozenCounter = templateControlFrozenCounter.GetRecords().ToDictionary(rec => rec.index, rec => new FrozenCounterConfig() { clazz = rec.clazz });
+                template.analog = templateControlAnalog.GetRecords().ToDictionary(rec => rec.index, rec => new AnalogConfig() { clazz = rec.clazz });
+                template.binaryOutputStatus = templateControlBOStatus.GetRecords().ToDictionary(rec => rec.index, rec => new BinaryOutputStatusConfig() { clazz = rec.clazz });
+                template.analogOutputStatus = templateControlAOStatus.GetRecords().ToDictionary(rec => rec.index, rec => new AnalogOutputStatusConfig() { clazz = rec.clazz });                                           
 
 
                 return template;
@@ -57,13 +57,13 @@ namespace Automatak.Simulator.DNP3.Components
 
         private void Configure(DatabaseTemplate template)
         {
-            this.templateControlAnalog.SetRecords(template.analogs);
-            this.templateControlAOStatus.SetRecords(template.analogOutputStatii);            
-            this.templateControlBinary.SetRecords(template.binaries);
-            this.templateControlBOStatus.SetRecords(template.binaryOutputStatii);
-            this.templateControlCounter.SetRecords(template.counters);
-            this.templateControlDoubleBinary.SetRecords(template.doubleBinaries);
-            this.templateControlFrozenCounter.SetRecords(template.frozenCounters);            
+            this.templateControlAnalog.SetRecords(template.analog.Select(kv => new EventRecord(kv.Key, kv.Value.clazz)));
+            this.templateControlAOStatus.SetRecords(template.analogOutputStatus.Select(kv => new EventRecord(kv.Key, kv.Value.clazz)));            
+            this.templateControlBinary.SetRecords(template.binary.Select(kv => new EventRecord(kv.Key, kv.Value.clazz)));
+            this.templateControlBOStatus.SetRecords(template.binaryOutputStatus.Select(kv => new EventRecord(kv.Key, kv.Value.clazz)));
+            this.templateControlCounter.SetRecords(template.counter.Select(kv => new EventRecord(kv.Key, kv.Value.clazz)));
+            this.templateControlDoubleBinary.SetRecords(template.doubleBinary.Select(kv => new EventRecord(kv.Key, kv.Value.clazz)));
+            this.templateControlFrozenCounter.SetRecords(template.frozenCounter.Select(kv => new EventRecord(kv.Key, kv.Value.clazz)));            
         }
       
     }

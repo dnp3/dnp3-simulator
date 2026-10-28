@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Automatak.Simulator.DNP3.RelayOutstationPlugin</RootNamespace>
     <AssemblyName>RelayOutstationPlugin</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -48,12 +48,12 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DNP3CLRAdapter, Version=1.0.6005.33625, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\..\..\packages\opendnp3.2.2.0-M1\lib\net45\DNP3CLRAdapter.dll</HintPath>
+    <Reference Include="DNP3CLRAdapter">
+      <HintPath>..\..\..\opendnp3\build\dotnet\CLRAdapter\Release\DNP3CLRAdapter.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DNP3CLRInterface, Version=2.0.1.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\opendnp3.2.2.0-M1\lib\net45\DNP3CLRInterface.dll</HintPath>
+    <Reference Include="DNP3CLRInterface">
+      <HintPath>..\..\..\opendnp3\build\dotnet\CLRAdapter\Release\DNP3CLRInterface.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

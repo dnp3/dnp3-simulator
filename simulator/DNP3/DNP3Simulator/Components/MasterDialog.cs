@@ -20,8 +20,22 @@ namespace Automatak.Simulator.DNP3.Components
             this.linkConfigControl.Configuration = new LinkConfig(true, false);
         }
 
+        public MasterDialog(string alias, MasterStackConfig config) : this()
+        {
+            Text = "Master settings";
+            buttonAdd.Text = "Apply";
+            textBoxID.Text = alias;
+            linkConfigControl.Configuration = config.link;
+            masterConfigControl.Configuration = config.master;
+        }
+
         private void buttonADD_Click(object sender, EventArgs e)
         {            
+            if (string.IsNullOrWhiteSpace(textBoxID.Text))
+            {
+                MessageBox.Show(this, "Specify a master alias.", "Master settings");
+                return;
+            }
             this.DialogResult = DialogResult.OK;
             this.Close();
         }

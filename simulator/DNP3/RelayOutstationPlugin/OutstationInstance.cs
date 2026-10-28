@@ -21,7 +21,7 @@ namespace Automatak.Simulator.DNP3.RelayOutstationPlugin
             get 
             {
                 var config =  new OutstationStackConfig();
-                config.databaseTemplate = new DatabaseTemplate(1, 0, 6, 0, 0, 0, 0, 0);
+                config.databaseTemplate = new DatabaseTemplate(1, 0, 6, 0, 0, 0, 0, 0, 0);
                 return config;
             }
         }

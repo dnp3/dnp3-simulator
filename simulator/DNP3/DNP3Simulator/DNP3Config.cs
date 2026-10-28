@@ -19,6 +19,25 @@ namespace Automatak.Simulator.DNP3
             this.outstations = outstations;
         }
 
+        public string SaveSettings()
+        {
+            return ConfigurationXml.Write(templates.ToDictionary(kv => kv.Key, kv => kv.Value));
+        }
+
+        public void LoadSettings(string settings)
+        {
+            var restored = ConfigurationXml.Read<Dictionary<string, DatabaseTemplate>>(settings);
+            templates.Clear();
+            foreach (var entry in restored) templates.Add(entry.Key, entry.Value);
+        }
+
+        public DNP3Config Copy()
+        {
+            var copy = new DNP3Config(outstations);
+            copy.LoadSettings(SaveSettings());
+            return copy;
+        }
+
         IEnumerable<IOutstationModule> IDNP3Config.OutstationModules
         {
             get

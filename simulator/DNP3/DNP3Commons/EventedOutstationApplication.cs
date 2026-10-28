@@ -110,11 +110,22 @@ namespace Automatak.Simulator.DNP3.Commons
 
         void ILinkStatusListener.OnStateChange(LinkStatus value) { }
 
+        void ILinkStatusListener.OnUnknownDestinationAddress(ushort destination) { }
+
+        void ILinkStatusListener.OnUnknownSourceAddress(ushort source) { }
+
         void ILinkStatusListener.OnKeepAliveInitiated() { }
 
         void ILinkStatusListener.OnKeepAliveFailure() { }
 
         void ILinkStatusListener.OnKeepAliveSuccess() { }
+
+        DNPTime IDnpTimeSource.Now()
+        {
+            return new DNPTime(DateTime.Now);
+        }
+
+        void IOutstationApplication.OnConfirmProcessed(bool is_unsolicited, uint num_class1, uint num_class2, uint num_class3) { }
 
         bool IOutstationApplication.SupportsWriteAbsoluteTime
         {

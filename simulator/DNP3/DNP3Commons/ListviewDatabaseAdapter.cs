@@ -35,42 +35,46 @@ namespace Automatak.Simulator.DNP3.Commons
 
         void IDatabase.Update(Binary update, ushort index, EventMode mode)
         {
-            this.Add(update.ToMeasurement(index, TimestampMode.SYNCHRONIZED), "Binary");
+            this.Add(update.ToMeasurement(index, TimestampQuality.SYNCHRONIZED), "Binary");
         }
 
         void IDatabase.Update(DoubleBitBinary update, ushort index, EventMode mode)
         {
-            this.Add(update.ToMeasurement(index, TimestampMode.SYNCHRONIZED), "DoubleBitBinary");
+            this.Add(update.ToMeasurement(index, TimestampQuality.SYNCHRONIZED), "DoubleBitBinary");
         }
 
         void IDatabase.Update(Analog update, ushort index, EventMode mode)
         {
-            this.Add(update.ToMeasurement(index, TimestampMode.SYNCHRONIZED), "Analog");
+            this.Add(update.ToMeasurement(index, TimestampQuality.SYNCHRONIZED), "Analog");
         }
 
         void IDatabase.Update(Counter update, ushort index, EventMode mode)
         {
-            this.Add(update.ToMeasurement(index, TimestampMode.SYNCHRONIZED), "Counter");
+            this.Add(update.ToMeasurement(index, TimestampQuality.SYNCHRONIZED), "Counter");
         }
 
-        void IDatabase.Update(FrozenCounter update, ushort index, EventMode mode)
+        void IDatabase.FreezeCounter(ushort index, bool clear, EventMode mode)
         {
-            this.Add(update.ToMeasurement(index, TimestampMode.SYNCHRONIZED), "FrozenCounter");
         }
 
         void IDatabase.Update(BinaryOutputStatus update, ushort index, EventMode mode)
         {
-            this.Add(update.ToMeasurement(index, TimestampMode.SYNCHRONIZED), "BinaryOutputStatus");
+            this.Add(update.ToMeasurement(index, TimestampQuality.SYNCHRONIZED), "BinaryOutputStatus");
         }
 
         void IDatabase.Update(AnalogOutputStatus update, ushort index, EventMode mode)
         {
-            this.Add(update.ToMeasurement(index, TimestampMode.SYNCHRONIZED), "AnalogOutputStatus");
+            this.Add(update.ToMeasurement(index, TimestampQuality.SYNCHRONIZED), "AnalogOutputStatus");
+        }
+
+        void IDatabase.Update(OctetString update, ushort index, EventMode mode)
+        {
+            this.Add(update.ToMeasurement(index, TimestampQuality.SYNCHRONIZED), "OctetString");
         }
 
         void IDatabase.Update(TimeAndInterval update, ushort index)
         {
-            this.Add(update.ToMeasurement(index, TimestampMode.SYNCHRONIZED), "TimeAndInterval");
+            this.Add(update.ToMeasurement(index, TimestampQuality.SYNCHRONIZED), "TimeAndInterval");
         }         
     }
 }

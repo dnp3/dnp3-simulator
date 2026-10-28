@@ -18,18 +18,18 @@ namespace Automatak.Simulator.DNP3
         {
             InitializeComponent();
 
-            this.comboBoxCode.DataSource = Enum.GetValues(typeof(ControlCode));
+            this.comboBoxCode.DataSource = Enum.GetValues(typeof(OperationType));
         }
 
         private IndexedValue<ControlRelayOutputBlock> ControlValue
         {
             get
             {
-                var code = (ControlCode)this.comboBoxCode.SelectedItem;
+                var opType = (OperationType)this.comboBoxCode.SelectedItem;
                 var count = Convert.ToByte(this.numericUpDownCount.Value);
                 var onTime = Convert.ToUInt32(this.numericUpDownOnTime.Value);
                 var offTime = Convert.ToUInt32(this.numericUpDownOffTime.Value);
-                var crob = new ControlRelayOutputBlock(code, count, onTime, offTime);
+                var crob = new ControlRelayOutputBlock(opType, TripCloseCode.NUL, false, count, onTime, offTime);
                 var index = Convert.ToUInt16(this.numericUpDownIndex.Value);
                 return IndexedValue.From(crob, index);
             }

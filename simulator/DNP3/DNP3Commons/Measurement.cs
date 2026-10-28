@@ -22,18 +22,18 @@ namespace Automatak.Simulator.DNP3.Commons
 
     public class Measurement
     {
-        public Measurement(string displayValue, MeasurementBase meas, TimestampMode tsmode, MeasType type, UInt16 index, IQualityBitInfo info)
+        public Measurement(string displayValue, MeasurementBase meas, TimestampQuality tsmode, MeasType type, UInt16 index, IQualityBitInfo info)
         {
             this.valueAsString = displayValue;
-            this.timeStamp = (tsmode == TimestampMode.INVALID) ? DateTime.Now : meas.Timestamp;
+            this.timeStamp = (tsmode == TimestampQuality.INVALID) ? DateTime.Now : meas.Timestamp.Value;
             this.tsmode = tsmode;
             this.type = type;
             this.index = index;
             this.info = info;
-            this.quality = meas.Quality;
+            this.quality = meas.Quality.Value;
         }
 
-        public Measurement(string displayValue, TimestampMode tsmode, MeasType type, UInt16 index, IQualityBitInfo info)
+        public Measurement(string displayValue, TimestampQuality tsmode, MeasType type, UInt16 index, IQualityBitInfo info)
         {
             this.valueAsString = displayValue;
             this.timeStamp = DateTime.Now;
@@ -92,13 +92,13 @@ namespace Automatak.Simulator.DNP3.Commons
             }
         }
 
-        private static string GetTimeModeString(TimestampMode mode)
+        private static string GetTimeModeString(TimestampQuality mode)
         {             
             switch(mode)
             {
-                case(TimestampMode.INVALID):
+                case(TimestampQuality.INVALID):
                     return "local timestamp";
-                case(TimestampMode.SYNCHRONIZED):
+                case(TimestampQuality.SYNCHRONIZED):
                     return "synchronized";
                 default:
                     return "unsynchronized";
@@ -116,7 +116,7 @@ namespace Automatak.Simulator.DNP3.Commons
         readonly UInt16 index;
         readonly string valueAsString;        
         readonly DateTime timeStamp;
-        readonly TimestampMode tsmode;
+        readonly TimestampQuality tsmode;
         readonly MeasType type;
         readonly IQualityBitInfo info;
         readonly byte quality;

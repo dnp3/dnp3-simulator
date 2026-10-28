@@ -14,6 +14,8 @@ namespace Automatak.Simulator.DNP3
 {
     class ChannelNode : ISimulatorNode
     {
+        readonly DNP3SimulatorPlugin plugin;
+        internal IChannel Channel { get { return channel; } }
         readonly IDNP3Config config;
         readonly IChannel channel;
         readonly ISimulatorNodeCallbacks callbacks;
@@ -30,8 +32,9 @@ namespace Automatak.Simulator.DNP3
             }
         }
 
-        public ChannelNode(IDNP3Config config, IChannel channel, ISimulatorNodeCallbacks callbacks, string alias)
+        public ChannelNode(DNP3SimulatorPlugin plugin, IDNP3Config config, IChannel channel, ISimulatorNodeCallbacks callbacks, string alias)
         {
+            this.plugin = plugin;
             this.config = config;
             this.channel = channel;
             this.callbacks = callbacks;
@@ -41,19 +44,16 @@ namespace Automatak.Simulator.DNP3
 
             this.masterFactory = new ActionNodeFactory("Add Master", cb => CreateMaster(cb));
             this.outstationFactory = new ActionNodeFactory("Add Outstation", cb => CreateOutstation(cb));
-
-
-            this.channel.AddStateListener(state => callbacks.ChangeState(GetNodeState(state)));
         }
 
         
-        static NodeState GetNodeState(ChannelState state)
+        public static NodeState GetNodeState(ChannelState state)
         {
             switch (state)
             { 
                 case(ChannelState.OPENING):
                     return NodeState.Inactive;
-                case (ChannelState.WAITING):
+                case (ChannelState.CLOSED):
                     return NodeState.Failed;
                 case (ChannelState.OPEN):
                     return NodeState.Active;                
@@ -81,7 +81,8 @@ namespace Automatak.Simulator.DNP3
                     else
                     {                        
                         master.Enable();
-                        return new MasterNode(cache, master, callbacks, alias);
+                        return plugin.WrapNode(new MasterNode(cache, master, callbacks, alias),
+                            new NodeConfiguration { Kind = "Master", Alias = alias, Master = masterConfig });
                     }                    
                 }
                 else
@@ -132,7 +133,8 @@ namespace Automatak.Simulator.DNP3
                             instance.ShowForm();
                         }
 
-                        return new OutstationNode(outstation, instance, callbacks);
+                        return plugin.WrapNode(new OutstationNode(outstation, instance, callbacks),
+                            new NodeConfiguration { Kind = "Outstation", Alias = alias, Module = module.Name, Outstation = outstationConfig });
                     }
                 }
                 else
@@ -186,6 +188,21 @@ namespace Automatak.Simulator.DNP3
                 yield return masterFactory;
                 yield return outstationFactory;
             }
+        }
+    }
+
+    class ChannelListenerAdapter : IChannelListener
+    {
+        readonly Action<ChannelState> action;
+
+        public ChannelListenerAdapter(Action<ChannelState> action)
+        {
+            this.action = action;
+        }
+
+        public void OnStateChange(ChannelState state)
+        {
+            this.action(state);
         }
     }
 }

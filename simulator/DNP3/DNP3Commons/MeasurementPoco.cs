@@ -25,8 +25,8 @@ namespace Automatak.Simulator.DNP3.Commons
         {
             this.sValue = sValue;
             this.index = index;
-            this.flags = meas.Quality.ToString("X2");
-            this.timeStamp = meas.Timestamp;
+            this.flags = meas.Quality.Value.ToString("X2");
+            this.timeStamp = meas.Timestamp.Value;
             this.row = row;  
             this.type = type;
         }        
@@ -34,8 +34,8 @@ namespace Automatak.Simulator.DNP3.Commons
         public void Update(string sValue, MeasurementBase meas)
         {
             Value = sValue;
-            Flags = meas.Quality.ToString("X2");
-            TimeStamp = meas.Timestamp;
+            Flags = meas.Quality.Value.ToString("X2");
+            TimeStamp = meas.Timestamp.Value;
         }
 
         private UInt16 index;

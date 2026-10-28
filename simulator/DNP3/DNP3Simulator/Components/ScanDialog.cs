@@ -18,18 +18,20 @@ namespace Automatak.Simulator.DNP3.Components
     public partial class ScanDialog : Form
     {
         readonly IMaster master;
+        readonly ISOEHandler soeHandler;
         readonly IList<ScanInfo> scans = new List<ScanInfo>();
 
-        public ScanDialog(IMaster master)
+        public ScanDialog(IMaster master, ISOEHandler soeHandler)
         {
             InitializeComponent();
 
             this.master = master;
+            this.soeHandler = soeHandler;
         }
 
         private void buttonOnce_Click(object sender, EventArgs e)
         {            
-            master.Scan(GetClassHeaders(classFieldControlScan.ClassFieldValue), TaskConfig.Default);
+            master.Scan(GetClassHeaders(classFieldControlScan.ClassFieldValue), soeHandler, TaskConfig.Default);
         }
 
         private static IEnumerable<Header> GetClassHeaders(ClassField classes)
@@ -75,11 +77,18 @@ namespace Automatak.Simulator.DNP3.Components
         {
             var period = TimeSpan.FromMilliseconds(Convert.ToDouble(this.numericUpDownPeriod.Value));
             var classes = classFieldControlScan.ClassFieldValue;
-            var headers = GetClassHeaders(classes);            
-            var info = new ScanInfo(master.AddScan(headers, period, TaskConfig.Default), ClassDescription(classes), period, DetailedDescription(headers));
+            var info = CreateScan(master, soeHandler, new ScanConfiguration { Classes = classes.ClassMask, Period = period });
             this.scans.Add(info);
             this.DialogResult = DialogResult.OK;
             this.Close();
+        }
+
+        internal static ScanInfo CreateScan(IMaster master, ISOEHandler handler, ScanConfiguration settings)
+        {
+            var classes = new ClassField(settings.Classes);
+            var headers = GetClassHeaders(classes);
+            return new ScanInfo(master.AddScan(headers, settings.Period, handler, TaskConfig.Default),
+                ClassDescription(classes), settings.Period, DetailedDescription(headers), settings.Classes);
         }
 
         public IEnumerable<ScanInfo> ConfiguredScans

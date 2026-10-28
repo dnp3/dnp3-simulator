@@ -20,6 +20,10 @@ namespace Automatak.Simulator.DNP3
         readonly IMaster master;
         readonly IMeasurementCache cache;      
 
+        public List<ScanConfiguration> ScanConfigurations { get { return masterScanControl1.Configurations; } }
+
+        public void RestoreScans(IEnumerable<ScanConfiguration> settings) { masterScanControl1.RestoreScans(settings); }
+
         public MasterForm(IMaster master, IMeasurementCache cache, String alias)
         {
             InitializeComponent();
@@ -30,6 +34,7 @@ namespace Automatak.Simulator.DNP3
             this.Text = String.Format("DNP3 Master ({0})", alias);
 
             this.masterScanControl1.Master = master;
+            this.masterScanControl1.SoeHandler = cache as ISOEHandler;
 
             this.comboBoxFunctionCode.DataSource = Enum.GetValues(typeof(FunctionCode));
         }                       

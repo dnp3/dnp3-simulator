@@ -1,0 +1,3 @@
+[submodule "opendnp3"]
+	path = opendnp3
+	url = https://github.com/a-eberle/opendnp3.git

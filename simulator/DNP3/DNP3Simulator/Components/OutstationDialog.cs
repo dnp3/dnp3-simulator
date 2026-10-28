@@ -36,11 +36,47 @@ namespace Automatak.Simulator.DNP3.Components
             else
             {
                 groupBoxDatabase.Enabled = false;   
+                staticResponseTypeControl1.LoadTemplate(initialConfig.databaseTemplate);
+                eventResponseTypeControl1.LoadTemplate(initialConfig.databaseTemplate);
+            }
+        }
+
+        public OutstationDialog(IDNP3Config config, IOutstationModule module, string alias, OutstationStackConfig settings)
+            : this(config, module)
+        {
+            Text = "Outstation settings";
+            buttonAdd.Text = "Apply";
+            initialConfig = ConfigurationXml.Clone(settings);
+            textBoxID.Text = alias;
+            linkConfigControl.Configuration = settings.link;
+            var parameters = settings.outstation.config;
+            checkBoxEnableUnsol.Checked = parameters.allowUnsolicited;
+            numericUpDownMaxControls.Value = parameters.maxControlsPerRequest;
+            numericUpDownMaxTxFrag.Value = parameters.maxTxFragSize;
+            numericUpDownSelectTimeout.Value = (decimal)parameters.selectTimeout.TotalMilliseconds;
+            numericUpDownUnsolConfirmTimeout.Value = (decimal)parameters.unsolConfirmTimeout.TotalMilliseconds;
+            numericUpDownSolConfirmTimeout.Value = (decimal)parameters.solicitedConfirmTimeout.TotalMilliseconds;
+            eventBufferConfigControl1.Configuration = settings.outstation.buffer;
+            staticResponseTypeControl1.LoadTemplate(settings.databaseTemplate);
+            eventResponseTypeControl1.LoadTemplate(settings.databaseTemplate);
+            if (allowTemplateEdit)
+            {
+                // Work on a private copy so Cancel cannot alter the running database/template.
+                var templateName = alias + " (current database)";
+                while (config.ContainsTemplateId(templateName)) templateName += "_";
+                config.AddTemplate(templateName, ConfigurationXml.Clone(settings.databaseTemplate));
+                comboBoxTemplate.DataSource = config.Templates.Select(kv => kv.Key).ToList();
+                comboBoxTemplate.SelectedItem = templateName;
             }
         }
 
         private void buttonADD_Click(object sender, EventArgs e)
         {            
+            if (string.IsNullOrWhiteSpace(textBoxID.Text))
+            {
+                MessageBox.Show(this, "Specify an outstation alias.", "Outstation settings");
+                return;
+            }
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
@@ -57,14 +93,13 @@ namespace Automatak.Simulator.DNP3.Components
         {
             get
             {
-                OutstationParams ret = new OutstationParams();
+                OutstationParams ret = ConfigurationXml.Clone(initialConfig.outstation.config);
                 ret.allowUnsolicited = this.checkBoxEnableUnsol.Checked;
                 ret.maxControlsPerRequest = Decimal.ToByte(this.numericUpDownMaxControls.Value);
                 ret.maxTxFragSize = Decimal.ToUInt16(this.numericUpDownMaxTxFrag.Value);
                 ret.selectTimeout = TimeSpan.FromMilliseconds(Decimal.ToDouble(this.numericUpDownSelectTimeout.Value));
-                ret.unsolicitedConfirmTimeout = TimeSpan.FromMilliseconds(Decimal.ToDouble(this.numericUpDownUnsolConfirmTimeout.Value));
+                ret.unsolConfirmTimeout = TimeSpan.FromMilliseconds(Decimal.ToDouble(this.numericUpDownUnsolConfirmTimeout.Value));
                 ret.solicitedConfirmTimeout = TimeSpan.FromMilliseconds(Decimal.ToDouble(this.numericUpDownSolConfirmTimeout.Value));
-                ret.unsolicitedRetryPeriod = TimeSpan.FromMilliseconds(Decimal.ToDouble(this.numericUpDownUnsolicitedRetry.Value));
                 return ret;
             }
         }
@@ -73,7 +108,7 @@ namespace Automatak.Simulator.DNP3.Components
         {
             get
             {
-                var oc = new OutstationStackConfig();
+                var oc = ConfigurationXml.Clone(initialConfig);
                 oc.link = this.linkConfigControl.Configuration;
                 
                 oc.outstation.config = this.OutstationParameters;
@@ -83,13 +118,14 @@ namespace Automatak.Simulator.DNP3.Components
                 {
                     var templateId = this.comboBoxTemplate.SelectedItem.ToString();
                     var template = config.GetTemplateMaybeNull(templateId);
-                    oc.databaseTemplate = (template == null) ? initialConfig.databaseTemplate : template;
+                    oc.databaseTemplate = ConfigurationXml.Clone(template ?? initialConfig.databaseTemplate);
                 }
                 else
                 {
-                    oc.databaseTemplate = initialConfig.databaseTemplate;
+                    oc.databaseTemplate = ConfigurationXml.Clone(initialConfig.databaseTemplate);
                 }
-                
+                staticResponseTypeControl1.Configure(oc.databaseTemplate);
+                eventResponseTypeControl1.Configure(oc.databaseTemplate);
 
                 return oc;
             }
@@ -138,6 +174,15 @@ namespace Automatak.Simulator.DNP3.Components
         private void comboBoxTemplate_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.CheckState();
+            if (config != null && comboBoxTemplate.SelectedItem != null)
+            {
+                var template = config.GetTemplateMaybeNull(comboBoxTemplate.SelectedItem.ToString());
+                if (template != null)
+                {
+                    staticResponseTypeControl1.LoadTemplate(template);
+                    eventResponseTypeControl1.LoadTemplate(template);
+                }
+            }
         }
 
         private void buttonEdit_Click(object sender, EventArgs e)

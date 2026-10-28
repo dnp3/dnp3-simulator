@@ -62,16 +62,16 @@ namespace Automatak.Simulator.DNP3.DefaultOutstationPlugin
             get
             {
                 var value = Decimal.ToDouble(numericUpDown1.Value);
-                var quality = qualitySelector.Quality;
-                var timestamp = DateTime.Now;
+                var quality = new Flags(qualitySelector.Quality);
+                var timestamp = new DNPTime(DateTime.Now);
                 var changes = new ChangeSet();            
                 if (isAnalog)
                 {
-                    indices.Each(i => changes.Update(new Analog(value, quality, timestamp), i));
+                    indices.Each(i => changes.Update(new Analog(value, quality, timestamp), i, EventMode.Detect));
                 }
                 else
                 {
-                    indices.Each(i => changes.Update(new AnalogOutputStatus(value, quality, timestamp), i));
+                    indices.Each(i => changes.Update(new AnalogOutputStatus(value, quality, timestamp), i, EventMode.Detect));
                 }
                 return changes;
             }

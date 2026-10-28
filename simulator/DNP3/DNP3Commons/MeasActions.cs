@@ -14,7 +14,7 @@ namespace Automatak.Simulator.DNP3.Commons
         {
             return (IDatabase db) =>
             {
-                db.Update(new Binary(value, quality, timestamp), index);
+                db.Update(new Binary(value, new Flags(quality), new DNPTime(timestamp)), index, EventMode.Detect);
             };
         }
 
@@ -22,7 +22,7 @@ namespace Automatak.Simulator.DNP3.Commons
         {
             return (IDatabase db) =>
             {
-                db.Update(new DoubleBitBinary(bits, quality, timestamp), index);
+                db.Update(new DoubleBitBinary(bits, new Flags(quality), new DNPTime(timestamp)), index, EventMode.Detect);
             };
         }
 
@@ -30,7 +30,7 @@ namespace Automatak.Simulator.DNP3.Commons
         {
             return (IDatabase db) =>
             {
-                db.Update(new BinaryOutputStatus(value, quality, timestamp), index);
+                db.Update(new BinaryOutputStatus(value, new Flags(quality), new DNPTime(timestamp)), index, EventMode.Detect);
             };
         }
 
@@ -38,7 +38,7 @@ namespace Automatak.Simulator.DNP3.Commons
         {
             return (IDatabase db) =>
             {
-                db.Update(new Analog(value, quality, timestamp), index);
+                db.Update(new Analog(value, new Flags(quality), new DNPTime(timestamp)), index, EventMode.Detect);
             };
         }
 
@@ -46,7 +46,7 @@ namespace Automatak.Simulator.DNP3.Commons
         {
             return (IDatabase db) =>
             {
-                db.Update(new AnalogOutputStatus(value, quality, timestamp), index);
+                db.Update(new AnalogOutputStatus(value, new Flags(quality), new DNPTime(timestamp)), index, EventMode.Detect);
             };
         }
 
@@ -54,7 +54,7 @@ namespace Automatak.Simulator.DNP3.Commons
         {
             return (IDatabase db) =>
             {
-                db.Update(new Counter(value, quality, timestamp), index);
+                db.Update(new Counter(value, new Flags(quality), new DNPTime(timestamp)), index, EventMode.Detect);
             };
         }
 
@@ -62,7 +62,7 @@ namespace Automatak.Simulator.DNP3.Commons
         {
             return (IDatabase db) =>
             {
-                db.Update(new FrozenCounter(value, quality, timestamp), index);
+                db.FreezeCounter(index, false, EventMode.Detect);
             };
         }
     }

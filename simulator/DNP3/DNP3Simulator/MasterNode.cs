@@ -28,7 +28,13 @@ namespace Automatak.Simulator.DNP3
             }
         }
 
-        public MasterNode(MeasurementCache cache, IMaster master, ISimulatorNodeCallbacks callbacks, string alias)
+        public List<ScanConfiguration> ScanConfigurations
+        {
+            get { return form == null ? new List<ScanConfiguration>() : form.ScanConfigurations; }
+        }
+
+        public MasterNode(MeasurementCache cache, IMaster master, ISimulatorNodeCallbacks callbacks, string alias,
+            IEnumerable<ScanConfiguration> scans = null)
         {            
             this.cache = cache;
             this.master = master;
@@ -38,6 +44,11 @@ namespace Automatak.Simulator.DNP3
             this.callbacks.ChangeImage(IconIndex.Master);
 
             this.openAction = new NodeAction("Open", () => OpenForm());
+            if (scans != null && scans.Any())
+            {
+                form = new MasterForm(master, cache, alias);
+                form.RestoreScans(scans);
+            }
         }
 
         void OpenForm()

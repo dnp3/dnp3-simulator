@@ -16,11 +16,24 @@ namespace Automatak.Simulator.DNP3.Components
     {
         IMaster master = null;
 
+        ISOEHandler soeHandler = null;
+
         readonly ICollection<ScanInfo> scans = new List<ScanInfo>();
 
         public MasterScanControl()
         {
             InitializeComponent();            
+        }
+
+        public List<ScanConfiguration> Configurations
+        {
+            get { return scans.Select(s => new ScanConfiguration { Classes = s.classes, Period = s.period }).ToList(); }
+        }
+
+        public void RestoreScans(IEnumerable<ScanConfiguration> settings)
+        {
+            foreach (var scan in settings) scans.Add(ScanDialog.CreateScan(master, soeHandler, scan));
+            RefreshScanList();
         }
 
         public IMaster Master
@@ -31,9 +44,17 @@ namespace Automatak.Simulator.DNP3.Components
             }
         }
 
+        public ISOEHandler SoeHandler
+        {
+            set
+            {
+                this.soeHandler = value;
+            }
+        }
+
         private void addScanToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (var dialog = new ScanDialog(master))
+            using (var dialog = new ScanDialog(master, soeHandler))
             {
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {

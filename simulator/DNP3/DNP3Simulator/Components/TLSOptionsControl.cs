@@ -20,6 +20,28 @@ namespace Automatak.Simulator.DNP3
             InitializeComponent();
         }
 
+        public TlsConfiguration SavedConfiguration
+        {
+            get
+            {
+                return new TlsConfiguration {
+                    PeerCertificate = trustedCertTextBox.Text, LocalCertificate = localCertificateTextBox.Text,
+                    PrivateKey = privateKeyTextBox.Text, CipherList = cipherListTextBox.Text,
+                    Tls10 = checkBoxV1_0.Checked, Tls11 = checkBoxV1_1.Checked, Tls12 = checkBoxV1_2.Checked
+                };
+            }
+            set
+            {
+                trustedCertTextBox.Text = value.PeerCertificate;
+                localCertificateTextBox.Text = value.LocalCertificate;
+                privateKeyTextBox.Text = value.PrivateKey;
+                cipherListTextBox.Text = value.CipherList;
+                checkBoxV1_0.Checked = value.Tls10;
+                checkBoxV1_1.Checked = value.Tls11;
+                checkBoxV1_2.Checked = value.Tls12;
+            }
+        }
+
         public TLSConfig Configuration
         {
             get
@@ -28,10 +50,10 @@ namespace Automatak.Simulator.DNP3
                     this.trustedCertTextBox.Text,
                     this.localCertificateTextBox.Text,
                     this.privateKeyTextBox.Text,
-                    Convert.ToInt32(this.maxDepthNumericUpDown.Value),
                     this.checkBoxV1_0.Checked,
                     this.checkBoxV1_1.Checked,
                     this.checkBoxV1_2.Checked,
+                    false,
                     this.cipherListTextBox.Text
                 );
 

@@ -14,6 +14,7 @@ namespace Automatak.Simulator.DNP3.Components
 {
     public partial class MasterConfigControl : UserControl
     {
+        MasterConfig initialConfig = new MasterConfig();
         public MasterConfigControl()
         {
             InitializeComponent();
@@ -30,7 +31,7 @@ namespace Automatak.Simulator.DNP3.Components
         {
             get
             {
-                var config = new MasterConfig();
+                var config = ConfigurationXml.Clone(initialConfig);
                 config.disableUnsolOnStartup = this.checkBoxDisableUnsolicited.Checked;
                 config.startupIntegrityClassMask = this.classFieldControlIntegrity.ClassFieldValue;
                 config.unsolClassMask = this.classFieldControlEnableUnsol.ClassFieldValue;
@@ -39,6 +40,17 @@ namespace Automatak.Simulator.DNP3.Components
                 config.responseTimeout = TimeSpan.FromMilliseconds(Decimal.ToDouble(this.numericUpDownResponseTimeout.Value));
                 config.taskRetryPeriod = TimeSpan.FromMilliseconds(Decimal.ToDouble(this.numericUpDownTaskRetryDelay.Value));
                 return config;
+            }
+            set
+            {
+                initialConfig = ConfigurationXml.Clone(value);
+                checkBoxDisableUnsolicited.Checked = value.disableUnsolOnStartup;
+                classFieldControlIntegrity.ClassFieldValue = value.startupIntegrityClassMask;
+                classFieldControlEnableUnsol.ClassFieldValue = value.unsolClassMask;
+                comboBoxTimeSync.SelectedItem = value.timeSyncMode;
+                checkBoxIntegrityOnOverflow.Checked = value.integrityOnEventOverflowIIN;
+                numericUpDownResponseTimeout.Value = (decimal)value.responseTimeout.TotalMilliseconds;
+                numericUpDownTaskRetryDelay.Value = (decimal)value.taskRetryPeriod.TotalMilliseconds;
             }
         }
     }

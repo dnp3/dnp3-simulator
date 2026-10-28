@@ -65,7 +65,7 @@ namespace Automatak.Simulator.DNP3.DefaultOutstationPlugin
                 if (checkBoxMapAnalog.Checked)
                 {
                     var changes = new ChangeSet();
-                    changes.Update(new AnalogOutputStatus(value, 0x01, DateTime.Now), index);
+                    changes.Update(new AnalogOutputStatus(value, new Flags(0x01), new DNPTime(DateTime.Now)), index, EventMode.Detect);
                     loader.Load(changes);                    
                 }
             }
@@ -79,44 +79,47 @@ namespace Automatak.Simulator.DNP3.DefaultOutstationPlugin
             }
             else
             {
-                var output = String.Format("Accepted CROB: {0} - {1}", crob.code, index);
+                var output = String.Format("Accepted CROB: {0} - {1}", crob.opType, index);
                 this.listBoxLog.Items.Add(output);
                 if (checkBoxMapBinary.Checked)
                 {
                     var timestamp = DateTime.Now;
 
-                    switch (crob.code)
+                    if (crob.opType == OperationType.LATCH_ON)
                     {
-                        case (ControlCode.LATCH_ON):
+                        this.LoadSingleBinaryOutputStatus(true, index, timestamp);
+                    }
+                    else if (crob.opType == OperationType.LATCH_OFF)
+                    {
+                        this.LoadSingleBinaryOutputStatus(false, index, timestamp);
+                    }
+                    else if (crob.opType == OperationType.PULSE_ON && crob.tcc == TripCloseCode.CLOSE)
+                    {
+                        this.LoadSingleBinaryOutputStatus(true, index, timestamp);
+                        if (crob.onTime > 0)
+                            this.LoadSingleBinaryOutputStatus(false, index, timestamp.AddMilliseconds(crob.onTime));
+                    }
+                    else if (crob.opType == OperationType.PULSE_ON && crob.tcc == TripCloseCode.TRIP)
+                    {
+                        this.LoadSingleBinaryOutputStatus(false, index, timestamp);
+                        if (crob.onTime > 0)
+                            this.LoadSingleBinaryOutputStatus(true, index, timestamp.AddMilliseconds(crob.onTime));
+                    }
+                    else if (crob.opType == OperationType.PULSE_ON)
+                    {
+                        if (crob.onTime > 0)
+                        {
                             this.LoadSingleBinaryOutputStatus(true, index, timestamp);
-                            break;
-                        case (ControlCode.LATCH_OFF):
+                            this.LoadSingleBinaryOutputStatus(false, index, timestamp.AddMilliseconds(crob.onTime));
+                        }
+                    }
+                    else if (crob.opType == OperationType.PULSE_OFF)
+                    {
+                        if (crob.offTime > 0)
+                        {
                             this.LoadSingleBinaryOutputStatus(false, index, timestamp);
-                            break;
-                        case (ControlCode.CLOSE_PULSE_ON):
-                            this.LoadSingleBinaryOutputStatus(true, index, timestamp);
-                            if (crob.onTime > 0)
-                                this.LoadSingleBinaryOutputStatus(false, index, timestamp.AddMilliseconds(crob.onTime));
-                            break;
-                        case (ControlCode.TRIP_PULSE_ON):
-                            this.LoadSingleBinaryOutputStatus(false, index, timestamp);
-                            if (crob.onTime > 0)
-                                this.LoadSingleBinaryOutputStatus(true, index, timestamp.AddMilliseconds(crob.onTime));
-                            break;
-                        case (ControlCode.PULSE_ON):
-                            if (crob.onTime > 0)
-                            {
-                                this.LoadSingleBinaryOutputStatus(true, index, timestamp);
-                                this.LoadSingleBinaryOutputStatus(false, index, timestamp.AddMilliseconds(crob.onTime));
-                            }
-                            break;
-                        case (ControlCode.PULSE_OFF):
-                            if (crob.offTime > 0)
-                            {
-                                this.LoadSingleBinaryOutputStatus(false, index, timestamp);
-                                this.LoadSingleBinaryOutputStatus(true, index, timestamp.AddMilliseconds(crob.offTime));
-                            }
-                            break;
+                            this.LoadSingleBinaryOutputStatus(true, index, timestamp.AddMilliseconds(crob.offTime));
+                        }
                     }
                 }
             }
@@ -125,7 +128,7 @@ namespace Automatak.Simulator.DNP3.DefaultOutstationPlugin
         void LoadSingleBinaryOutputStatus(bool value, ushort index, DateTime timestamp)
         {
             var changes = new ChangeSet();
-            changes.Update(new BinaryOutputStatus(value, 0x01, timestamp), index);
+            changes.Update(new BinaryOutputStatus(value, new Flags(0x01), new DNPTime(timestamp)), index, EventMode.Detect);
             loader.Load(changes);            
         }
 

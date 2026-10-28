@@ -32,6 +32,10 @@ namespace Automatak.Simulator
             this.log = new LogMultiplexer(this.logWindow1, fileLogger);
 
             this.logFileControl.FileLogger = fileLogger;
+            this.saveToolStripMenuItem.Click += SaveConfiguration_Click;
+            this.loadToolStripMenuItem.Click += LoadConfiguration_Click;
+            this.saveToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
+            this.loadToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.O;
 
             var toolTipUserNote = new ToolTip();
             toolTipUserNote.SetToolTip(this.buttonMakeNote, "Make a user-defined note in the log");
@@ -57,13 +61,19 @@ namespace Automatak.Simulator
 
             var menu = new ContextMenu();
 
+            if (simNode is IConfigurableSimulatorNode)
+            {
+                menu.MenuItems.Add(new MenuItem("Settings...", (o, e) => ConfigurationAction(() => EditNode(node))));
+                menu.MenuItems.Add("-");
+            }
+
             foreach (var nodeAction in simNode.Actions)
             {
                 var action = new MenuItem(nodeAction.DisplayName);
                 action.Click += new EventHandler(
                     delegate(Object o, EventArgs a)
                     {
-                        nodeAction.Invoke();
+                        ConfigurationAction(() => nodeAction.Invoke());
                     }
                 );
                 menu.MenuItems.Add(action);
@@ -80,12 +90,12 @@ namespace Automatak.Simulator
                 action.Click += new EventHandler(
                     delegate(Object o, EventArgs a)
                     {
-                        var callbacks = new TreeNodeCallbacks(this);
-                        var child = factory.Create(callbacks);
-                        if (child != null)
+                        ConfigurationAction(() =>
                         {
-                            this.BindNode(child, callbacks.node, node.Nodes);
-                        }
+                            var callbacks = new TreeNodeCallbacks(this);
+                            var child = factory.Create(callbacks);
+                            if (child != null) this.BindNode(child, callbacks.node, node.Nodes);
+                        });
                     }
                 );
                 menu.MenuItems.Add(action);
@@ -133,23 +143,30 @@ namespace Automatak.Simulator
                 page.Tag = treeView;
                 treeView.Dock = DockStyle.Fill;
                 treeView.ImageList = instance.NodeImageList;
+                treeView.Tag = instance;
+                treeView.HideSelection = false;
+                treeView.NodeMouseClick += (o, args) => {
+                    if (args.Button == MouseButtons.Right) treeView.SelectedNode = args.Node;
+                };
+                pluginTrees.Add(instance.UniqueId, treeView);
                 page.Controls.Add(treeView);
                 this.tabControlPlugins.TabPages.Add(page);
                 
                 item.Click += new EventHandler(
                     delegate(Object o, EventArgs a)
                     {                        
-                        var callbacks = new TreeNodeCallbacks(this);
-                        var node = instance.Create(callbacks);
-                        if (node != null)
+                        ConfigurationAction(() =>
                         {
-                            BindNode(node, callbacks.node, treeView.Nodes);
-                        }
+                            var callbacks = new TreeNodeCallbacks(this);
+                            var node = instance.Create(callbacks);
+                            if (node != null) BindNode(node, callbacks.node, treeView.Nodes);
+                        });
                     }
                 );
 
                 this.log.LogFull(DisplayHint.INFO, "INFO", "system", "Initialized " + instance.UniqueId + " plugin");
             }
+            RestoreSession();
         }
 
         private IEnumerable<Metric> GetMetrics()
@@ -190,17 +207,24 @@ namespace Automatak.Simulator
 
         private void SimulatorForm_Shown(object sender, EventArgs e)
         {
-            if (splashOnLoad)
-            {
-                using (var about = new AboutBox())
-                {
-                    about.ShowDialog();
-                }
-            }             
         }
 
         private void SimulatorForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (e.Cancel) return;
+            if (automaticSaveEnabled)
+            {
+                try { WriteConfigurationFile(sessionPath, CaptureConfiguration()); }
+                catch (Exception ex)
+                {
+                    e.Cancel = true;
+                    MessageBox.Show(this, "Could not save the session:\n" + ex.Message,
+                        "Save session", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+            timerMetrics.Stop();
+            foreach (var tree in pluginTrees.Values) ClearTree(tree);
             fileLogger.Shutdown();
         }
 

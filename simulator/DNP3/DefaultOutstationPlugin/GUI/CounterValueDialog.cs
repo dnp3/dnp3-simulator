@@ -40,16 +40,16 @@ namespace Automatak.Simulator.DNP3.DefaultOutstationPlugin
             get
             {
                 var value = Decimal.ToUInt32(numericUpDown1.Value);
-                var quality = qualitySelector.Quality;
-                var timestamp = DateTime.Now;
+                var quality = new Flags(qualitySelector.Quality);
+                var timestamp = new DNPTime(DateTime.Now);
                 var changes = new ChangeSet();            
                 if (isCounter)
                 {
-                    indices.Each(i => changes.Update(new Counter(value, quality, timestamp), i));
+                    indices.Each(i => changes.Update(new Counter(value, quality, timestamp), i, EventMode.Detect));
                 }
                 else
                 {
-                    indices.Each(i => changes.Update(new FrozenCounter(value, quality, timestamp), i));
+                    indices.Each(i => changes.FreezeCounter(i, false, EventMode.Detect));
                 }
                 return changes;
             }
